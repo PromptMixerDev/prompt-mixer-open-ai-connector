@@ -1,9 +1,8 @@
 import OpenAI from 'openai';
 import { config } from './config.js';
 import { ChatCompletion } from 'openai/resources';
-const openai = new OpenAI({
-  apiKey: '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',
-});
+
+const API_KEY = 'API_KEY';
 
 interface Message {
   role: string;
@@ -57,7 +56,12 @@ async function main(
   model: string,
   prompts: string[],
   properties: Record<string, unknown>,
+  settings: Record<string, unknown>,
 ) {
+  const openai = new OpenAI({
+    apiKey: settings?.[API_KEY] as string,
+  });
+
   const total = prompts.length;
   const { prompt, ...restProperties } = properties;
   const systemPrompt = (prompt ||
