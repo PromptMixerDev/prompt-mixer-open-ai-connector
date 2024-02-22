@@ -1,0 +1,11 @@
+{
+  "id": "prompt-mixer-open-ai",
+  "name": "Open AI Connector",
+  "version": "1.0.0",
+  "minAppVersion": "0.1.0",
+  "description": "Demonstrates some of the capabilities of the Prompt Mixer",
+  "author": "Prompt Mixer",
+  "authorUrl": "https://promptmixer.dev",
+  "fundingUrl": "https://promptmixer.dev/pricing",
+  "isDesktopOnly": false
+}
