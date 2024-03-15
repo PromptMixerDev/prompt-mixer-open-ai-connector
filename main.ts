@@ -11,6 +11,7 @@ interface Message {
 
 interface Completion {
   Content: string | null;
+  Error?: string | undefined;
   TokenUsage: number | undefined;
 }
 
@@ -25,6 +26,7 @@ interface ErrorCompletion {
       content: string;
     };
   }>;
+  error: string,
   model: string;
   usage: undefined;
 }
@@ -34,10 +36,20 @@ const mapToResponse = (
   model: string,
 ): ConnectorResponse => {
   return {
-    Completions: outputs.map((output) => ({
-      Content: output.choices[0].message.content,
-      TokenUsage: output.usage?.total_tokens,
-    })),
+    Completions: outputs.map((output) => {
+      if ('error' in output) {
+        return {
+          Content: null,
+          TokenUsage: undefined,
+          Error: output.error,
+        };
+      } else {
+        return {
+          Content: output.choices[0]?.message?.content,
+          TokenUsage: output.usage?.total_tokens,
+        };
+      }
+    }),
     ModelType: outputs[0].model || model,
   };
 };
@@ -46,7 +58,8 @@ const mapToResponse = (
 const mapErrorToCompletion = (error: any, model: string): ErrorCompletion => {
   const errorMessage = error.message || JSON.stringify(error);
   return {
-    choices: [{ message: { content: errorMessage } }],
+    choices: [],
+    error: errorMessage,
     model,
     usage: undefined,
   };
