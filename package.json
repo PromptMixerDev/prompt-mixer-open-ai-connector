@@ -1,6 +1,6 @@
 {
   "name": "prompt-mixer-open-ai-connector",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "This plugin executes prompts via the OpenAI API.",
   "type": "module",
   "main": "main.js",
