@@ -1,7 +1,7 @@
 {
   "name": "prompt-mixer-open-ai-connector",
-  "version": "1.0.3",
-  "description": "This plugin executes prompts via the OpenAI API.",
+  "version": "1.0.4",
+  "description": "OpenAI Connector leverage the power of advanced AI models provided by OpenAI, such as GPT",
   "type": "module",
   "main": "main.js",
   "scripts": {
