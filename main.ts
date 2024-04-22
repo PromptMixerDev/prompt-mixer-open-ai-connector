@@ -1,12 +1,13 @@
 import OpenAI from 'openai';
 import { config } from './config.js';
 import { ChatCompletion } from 'openai/resources';
+import * as fs from 'fs';
 
 const API_KEY = 'API_KEY';
 
 interface Message {
   role: string;
-  content: string;
+  content: Array<{ type: string; text?: string; image_url?: { url: string } }>;
 }
 
 interface Completion {
@@ -26,7 +27,7 @@ interface ErrorCompletion {
       content: string;
     };
   }>;
-  error: string,
+  error: string;
   model: string;
   usage: undefined;
 }
@@ -65,6 +66,11 @@ const mapErrorToCompletion = (error: any, model: string): ErrorCompletion => {
   };
 };
 
+function encodeImage(imagePath: string): string {
+  const imageBuffer = fs.readFileSync(imagePath);
+  return Buffer.from(imageBuffer).toString('base64');
+}
+
 async function main(
   model: string,
   prompts: string[],
@@ -79,27 +85,48 @@ async function main(
   const { prompt, ...restProperties } = properties;
   const systemPrompt = (prompt ||
     config.properties.find((prop) => prop.id === 'prompt')?.value) as string;
-
-  const messageHistory: Message[] = [{ role: 'system', content: systemPrompt }];
+  const messageHistory: Message[] = [{ role: 'system', content: [{ type: 'text', text: systemPrompt }] }];
   const outputs: Array<ChatCompletion | ErrorCompletion> = [];
 
   try {
     for (let index = 0; index < total; index++) {
       try {
-        messageHistory.push({ role: 'user', content: prompts[index] });
-        // Cast messageHistory to the expected type if needed
+        const userPrompt = prompts[index];
+        const imageUrls = extractImageUrls(userPrompt);
+        const messageContent: Message['content'] = [{ type: 'text', text: userPrompt }];
+
+        for (const imageUrl of imageUrls) {
+          if (imageUrl.startsWith('http')) {
+            messageContent.push({
+              type: 'image_url',
+              image_url: {
+                url: imageUrl,
+              },
+            });
+          } else {
+            const base64Image = encodeImage(imageUrl);
+            messageContent.push({
+              type: 'image_url',
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+              },
+            });
+          }
+        }
+
+        messageHistory.push({ role: 'user', content: messageContent });
+        console.log(messageHistory);
+
         const chatCompletion = await openai.chat.completions.create({
           messages: messageHistory as unknown as [],
           model,
           ...restProperties,
         });
+
         outputs.push(chatCompletion);
-
-        // Handling potential null value in assistantResponse
         const assistantResponse =
-          chatCompletion.choices[0].message.content || 'No response.'; // Provide a default value
-        messageHistory.push({ role: 'assistant', content: assistantResponse });
-
+          chatCompletion.choices[0].message.content || 'No response.';
+        messageHistory.push({ role: 'assistant', content: [{ type: 'text', text: assistantResponse }] });
         console.log(
           `Response to prompt ${index + 1} of ${total}:`,
           chatCompletion,
@@ -115,6 +142,24 @@ async function main(
     console.error('Error in main function:', error);
     return { Error: error, ModelType: model };
   }
+}
+
+
+function extractImageUrls(prompt: string): string[] {
+  const imageExtensions = ['.png', '.jpeg', '.jpg', '.webp', '.gif'];
+  // Updated regex to match both http and local file paths
+  const urlRegex = /(https?:\/\/[^\s]+|[a-zA-Z]:\\[^:<>"|?\n]*|\/[^:<>"|?\n]*)/g;
+  const urls = prompt.match(urlRegex) || [];
+  
+  return urls.filter((url) => {
+      const extensionIndex = url.lastIndexOf('.');
+      if (extensionIndex === -1) {
+          // If no extension found, return false.
+          return false;
+      }
+      const extension = url.slice(extensionIndex);
+      return imageExtensions.includes(extension.toLowerCase());
+  });
 }
 
 export { main, config };
