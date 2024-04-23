@@ -1,6 +1,6 @@
 export const config = {
   connectorName: 'OpenAI',
-  connectorVersion: '1.0.4',
+  connectorVersion: '1.0.5',
   models: [
     'gpt-4-turbo',
     'gpt-4-turbo-2024-04-09',
