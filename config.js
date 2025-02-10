@@ -1,6 +1,6 @@
 export const config = {
   connectorName: 'Open AI Connector',
-  connectorVersion: '1.0.10',
+  connectorVersion: '1.2.1',
   models: [
     'o1',
     'o1-2024-12-17',
