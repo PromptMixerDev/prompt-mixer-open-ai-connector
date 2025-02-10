@@ -1,6 +1,6 @@
 {
   "name": "prompt-mixer-open-ai-connector",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "description": "OpenAI Connector leverage the power of advanced AI models provided by OpenAI, such as GPT",
   "type": "module",
   "main": "main.js",
@@ -23,6 +23,7 @@
     "openai": "^4.82.0"
   },
   "devDependencies": {
+    "@types/node": "^22.13.1",
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.3",

@@ -1,7 +1,15 @@
 export const config = {
-  connectorName: 'OpenAI',
-  connectorVersion: '1.0.9',
+  connectorName: 'Open AI Connector',
+  connectorVersion: '1.0.10',
   models: [
+    'o1',
+    'o1-2024-12-17',
+    'o1-mini',
+    'o1-mini-2024-09-12',
+    'o1-preview',
+    'o1-preview-2024-09-12',
+    'o3-mini',
+    'o3-mini-2025-01-31',
     'gpt-4o-64k-output-alpha',
     'gpt-4o-mini',
     'gpt-4o-mini-2024-07-18',
