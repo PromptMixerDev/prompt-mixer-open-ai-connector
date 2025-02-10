@@ -66,6 +66,10 @@ const mapErrorToCompletion = (error: any, model: string): ErrorCompletion => {
   };
 };
 
+function isO1Model(model: string): boolean {
+  return model.toLowerCase().startsWith('o1');
+}
+
 function encodeImage(imagePath: string): string {
   const imageBuffer = fs.readFileSync(imagePath);
   return Buffer.from(imageBuffer).toString('base64');
@@ -85,7 +89,11 @@ async function main(
   const { prompt, ...restProperties } = properties;
   const systemPrompt = (prompt ||
     config.properties.find((prop) => prop.id === 'prompt')?.value) as string;
-  const messageHistory: Message[] = [{ role: 'system', content: [{ type: 'text', text: systemPrompt }] }];
+  const messageHistory: Message[] = [];
+  
+  if (!isO1Model(model)) {
+    messageHistory.push({ role: 'developer', content: [{ type: 'text', text: systemPrompt }] });
+  }
   const outputs: Array<ChatCompletion | ErrorCompletion> = [];
 
   try {

@@ -1,7 +1,7 @@
 {
   "id": "prompt-mixer-open-ai",
   "name": "Open AI Connector",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "minAppVersion": "0.1.0",
   "description": "OpenAI Connector leverage the power of advanced AI models provided by OpenAI, such as GPT",
   "author": "Prompt Mixer",
