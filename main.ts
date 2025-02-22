@@ -4,6 +4,7 @@ import { ChatCompletion } from 'openai/resources';
 import * as fs from 'fs';
 
 const API_KEY = 'API_KEY';
+const TOOL_CALLS_FINISH_REASON = 'tool_calls';
 
 interface Message {
   role: string;
@@ -14,6 +15,7 @@ interface Completion {
   Content: string | null;
   Error?: string | undefined;
   TokenUsage: number | undefined;
+  FinishReason?: string;
 }
 
 interface ConnectorResponse {
@@ -44,6 +46,12 @@ const mapToResponse = (
           TokenUsage: undefined,
           Error: output.error,
         };
+      } else if (output.choices[0]?.finish_reason === TOOL_CALLS_FINISH_REASON) {
+        return {
+          Content: JSON.stringify(output.choices[0]?.message?.tool_calls),
+          TokenUsage: output.usage?.total_tokens,
+          FinishReason: TOOL_CALLS_FINISH_REASON,
+        }
       } else {
         return {
           Content: output.choices[0]?.message?.content,
