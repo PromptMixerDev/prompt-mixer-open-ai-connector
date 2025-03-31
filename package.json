@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "builtin-modules": "^4.0.0",
+    "builtin-modules": "^5.0.0",
     "esbuild": "^0.25.1",
     "fs": "^0.0.1-security",
     "openai": "^4.89.0"
