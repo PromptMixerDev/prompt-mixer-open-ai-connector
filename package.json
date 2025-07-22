@@ -20,7 +20,7 @@
     "builtin-modules": "^4.0.0",
     "esbuild": "^0.25.8",
     "fs": "^0.0.1-security",
-    "openai": "^5.9.0"
+    "openai": "^5.10.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.15",
